@@ -1,11 +1,8 @@
-import sys, asyncio
-from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QVBoxLayout, QWidget
+import sys, asyncio 
+from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QVBoxLayout, QWidget, QTextEdit
 from PyQt6.QtCore import QThread, pyqtSignal
 from laser_timing import Ui_MainWindow
-from vironAPI import initialize, send_receive
-
-""" CONSTANTS """
-LASERS = {"v1" : {"HOST":"192.168.103.105", "PORT":"25", "MAC":"0080A36BE41D"}}
+from vironAPI import send_receive, login_command, create_reader_writer 
 
 class LaserGUI(QMainWindow, Ui_MainWindow):
     def __init__(self):
@@ -20,6 +17,26 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
             ll.clicked.connect(self.enable)
             ll = self.ui.__dict__[l + "_init"]
             ll.clicked.connect(self.initialize)
+        
+        self.make_laser_dict()
+
+        if sys.platform == "win32":
+            asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
+        self.loop = asyncio.get_event_loop()
+
+    def make_laser_dict(self):
+        lasers = [ii.objectName().rstrip("_enabled") for ii  in self.findChildren(QPushButton) if "_enabled" in ii.objectName()]
+        widgets = self.findChildren(QTextEdit)
+        for laser in lasers:
+            if laser.startswith("v"):
+                ip = next(ii.toPlainText() for ii in widgets if ii.objectName() == laser + "_ip")
+                print(ip)
+                host, port = ip.split(":")
+                mac = next(ii.toPlainText() for ii in widgets if ii.objectName() == laser + "_mac")
+                self.lasers[laser]["HOST"] = host
+                self.lasers[laser]["PORT"] = port
+                self.lasers[laser]["MAC"] = mac
 
     def enable(self):
         button = self.sender()
@@ -31,64 +48,36 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
     def initialize(self):
         l = self.sender().objectName().strip("_init")
         if self.sender().isChecked():
-            self.worker_thread = WorkerThread(self.sender())
-            self.worker_thread.result_signal.connect(self.on_task_complete)
-            reader, writer = self.worker_thread.init_laser()
-            if reader or writer:
-                self.lasers[l]["reader"], self.lasers[l]["writer"] = reader, writer
+            self.loop.run_until_complete(self.init_laser(l))
+            self.sender().setText("Standby")
         else:
-            self.worker_thread = WorkerThread(self.sender())
-            self.worker_thread.result_signal.connect(self.on_task_complete)
-            self.worker_thread.stop_laser(self.lasers[l]["reader"], self.lasers[l]["writer"])
+            self.loop.run_until_complete(self.stop_laser(l))
+            self.sender().setText("Initialize")
 
-    def cleanup_thread(self):
-        self.worker_thread.quit()
-        self.worker_thread.wait()
+    async def init_laser(self, laser):
+        if laser.startswith("v"):
+            if not ("reader" in self.lasers[laser] or "writer" in self.lasers[laser]):
+                reader, writer = await create_reader_writer(
+                    host=self.lasers[laser]["HOST"], 
+                    port=self.lasers[laser]["PORT"], 
+                    mac=self.lasers[laser]["MAC"]
+                    )
+                await send_receive(reader, writer, login_command(self.lasers[laser]["MAC"]))
+                self.lasers[laser]["reader"], self.lasers[laser]["writer"] = reader, writer
+            await send_receive(self.lasers[laser]["reader"], self.lasers[laser]["writer"], "$STANDBY\n")
 
-    def on_task_complete(self, result):
-        print(f"Task complete: {result}")
-        self.cleanup_thread()
-
-
-class WorkerThread(QThread):
-    result_signal = pyqtSignal(str)
-
-    def __init__(self, laserObject):
-        self.laserObj = laserObject
-        self.laser = self.laserObj.objectName().strip("_init")
-        super().__init__()
-
-    def init_laser(self):
-        reader, writer = asyncio.run(self.initialize())
-        return reader, writer
-
-    def stop_laser(self, reader, writer):
-        asyncio.run(self.stop(reader, writer))
-
-    async def initialize(self):
-        if self.laser.startswith("v"):
-            reader, writer = await initialize(host=LASERS[self.laser]["HOST"], port=LASERS[self.laser]["PORT"], mac=LASERS[self.laser]["MAC"])
-            if reader or writer:
-                self.result_signal.emit("Initialization complete")
-                self.laserObj.setText("Ready to fire")
-            else:
-                self.result_signal.emit("Initialization failed")
-                self.laserObj.setText("Initialize")
-                self.laserObj.setChecked(False)
-            
-        return reader, writer
+    async def stop_laser(self, laser):
+        if laser.startswith("v"):
+            await send_receive(self.lasers[laser]["reader"], self.lasers[laser]["writer"], "$STOP\n")
 
 
-    ### This function is not yet working -- just crashes in send_receive
-    async def stop(self, reader, writer):
-        print(reader, writer)
-        if self.laser.startswith("v"):
-            await send_receive(reader, writer, "$STOP\n")
-            self.laserObj.setText("Initialize")
-            self.laserObj.setChecked(False)
-
-if __name__ == '__main__':
+def main():
     app = QApplication(sys.argv)
     window = LaserGUI()
     window.show()
+
     sys.exit(app.exec())
+
+
+if __name__ == '__main__':
+    main()
