@@ -13,16 +13,23 @@ def login_command(MAC):
     return f"$LOGIN VR{MAC[-6:]}\n"
 
 async def send_receive(reader, writer, command):
+    print(writer, reader)
     writer.write(command)
     resp = await reader.read(1024)
+    print(resp)
     return resp
 
 async def initialize(host=HOST, port=PORT, mac=MAC):
     try:
         reader, writer = await telnetlib3.open_connection(host=HOST, port=PORT, encoding="ascii")
-        print(await send_receive(reader, writer, login_command(MAC)))
-    except:
-        raise Exception("Could not connect to the laser")
+        resp = await send_receive(reader, writer, login_command(MAC))
+        resp = await send_receive(reader, writer, STANDBY)
+        if resp == STANDBY:
+            print("Laser {MAC} is ready to fire")
+    # except ConnectionRefusedError:
+    except IndexError:
+        print("Could not connect to the laser")
+        return None, None
     return reader, writer
 
 async def communicate(host=HOST, port=PORT, mac=MAC):
@@ -39,4 +46,5 @@ async def communicate(host=HOST, port=PORT, mac=MAC):
     finally:
         writer.close()
 
-asyncio.run(communicate())
+if __name__ == "__main__":
+    asyncio.run(communicate())

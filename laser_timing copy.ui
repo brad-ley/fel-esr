@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>784</width>
-    <height>341</height>
+    <width>786</width>
+    <height>355</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -26,7 +26,7 @@
       <x>10</x>
       <y>40</y>
       <width>751</width>
-      <height>281</height>
+      <height>285</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
@@ -46,7 +46,7 @@
         <string>Initialize</string>
        </property>
        <property name="checkable">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="checked">
         <bool>false</bool>
@@ -59,7 +59,7 @@
         <string>Initialize</string>
        </property>
        <property name="checkable">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="checked">
         <bool>false</bool>
@@ -191,7 +191,7 @@
         <string>Initialize</string>
        </property>
        <property name="checkable">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="checked">
         <bool>false</bool>
@@ -673,7 +673,7 @@
         <string>Initialize</string>
        </property>
        <property name="checkable">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="checked">
         <bool>false</bool>
@@ -686,7 +686,7 @@
         <string>Initialize</string>
        </property>
        <property name="checkable">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="checked">
         <bool>false</bool>
@@ -699,7 +699,7 @@
         <string>Initialize</string>
        </property>
        <property name="checkable">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="checked">
         <bool>false</bool>
@@ -708,11 +708,14 @@
      </item>
      <item row="9" column="8">
       <widget class="QPushButton" name="c5_init">
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
        <property name="text">
         <string>Initialize</string>
        </property>
        <property name="checkable">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="checked">
         <bool>false</bool>
