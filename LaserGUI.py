@@ -36,6 +36,7 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
             - TODO(Brad): handle timing if in EI, EE, etc mode -- set defaults and disable timing
             input if it is already fixed by the mode
             - TODO(Brad): add diagnostic window to top of GUI to show laser status, etc
+            - TODO(Brad): try with multiple lasers connected
             """
 
         self.make_laser_dict()
