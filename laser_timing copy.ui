@@ -41,7 +41,7 @@
       </widget>
      </item>
      <item row="2" column="2">
-      <widget class="QDoubleSpinBox" name="v2_timing_fl">
+      <widget class="QDoubleSpinBox" name="v2_timing_diode">
        <property name="decimals">
         <number>3</number>
        </property>
@@ -78,20 +78,20 @@
      <item row="6" column="3">
       <widget class="QPushButton" name="c2_trig_qs">
        <property name="text">
-        <string>Internal</string>
+        <string>External</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
        </property>
        <property name="checked">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>
      <item row="1" column="6">
       <widget class="QPushButton" name="v1_enabled">
        <property name="text">
-        <string>Disabled</string>
+        <string>Enable</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -152,7 +152,7 @@
       </widget>
      </item>
      <item row="8" column="2">
-      <widget class="QDoubleSpinBox" name="c4_timing_fl">
+      <widget class="QDoubleSpinBox" name="c4_timing_diode">
        <property name="decimals">
         <number>3</number>
        </property>
@@ -191,22 +191,22 @@
       </widget>
      </item>
      <item row="6" column="1">
-      <widget class="QPushButton" name="c2_trig_fl">
+      <widget class="QPushButton" name="c2_trig_diode">
        <property name="text">
-        <string>Internal</string>
+        <string>External</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
        </property>
        <property name="checked">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>
      <item row="4" column="6">
       <widget class="QPushButton" name="c1_enabled">
        <property name="text">
-        <string>Disabled</string>
+        <string>Enable</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -219,7 +219,7 @@
      <item row="7" column="6">
       <widget class="QPushButton" name="c3_enabled">
        <property name="text">
-        <string>Disabled</string>
+        <string>Enable</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -230,15 +230,15 @@
       </widget>
      </item>
      <item row="2" column="1">
-      <widget class="QPushButton" name="v2_trig_fl">
+      <widget class="QPushButton" name="v2_trig_diode">
        <property name="text">
-        <string>Internal</string>
+        <string>External</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
        </property>
        <property name="checked">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -252,7 +252,7 @@
      <item row="6" column="6">
       <widget class="QPushButton" name="c2_enabled">
        <property name="text">
-        <string>Disabled</string>
+        <string>Enable</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -280,15 +280,15 @@
       </widget>
      </item>
      <item row="9" column="1">
-      <widget class="QPushButton" name="c5_trig_fl">
+      <widget class="QPushButton" name="c5_trig_diode">
        <property name="text">
-        <string>Internal</string>
+        <string>External</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
        </property>
        <property name="checked">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -300,7 +300,7 @@
       </widget>
      </item>
      <item row="9" column="2">
-      <widget class="QDoubleSpinBox" name="c5_timing_fl">
+      <widget class="QDoubleSpinBox" name="c5_timing_diode">
        <property name="decimals">
         <number>3</number>
        </property>
@@ -350,13 +350,13 @@
      <item row="8" column="3">
       <widget class="QPushButton" name="c4_trig_qs">
        <property name="text">
-        <string>Internal</string>
+        <string>External</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
        </property>
        <property name="checked">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -368,15 +368,15 @@
       </widget>
      </item>
      <item row="4" column="1">
-      <widget class="QPushButton" name="c1_trig_fl">
+      <widget class="QPushButton" name="c1_trig_diode">
        <property name="text">
-        <string>Internal</string>
+        <string>External</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
        </property>
        <property name="checked">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -388,7 +388,7 @@
       </widget>
      </item>
      <item row="4" column="2">
-      <widget class="QDoubleSpinBox" name="c1_timing_fl">
+      <widget class="QDoubleSpinBox" name="c1_timing_diode">
        <property name="decimals">
         <number>3</number>
        </property>
@@ -416,7 +416,7 @@
      <item row="2" column="6">
       <widget class="QPushButton" name="v2_enabled">
        <property name="text">
-        <string>Disabled</string>
+        <string>Enable</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -451,20 +451,20 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QPushButton" name="v1_trig_f1">
+      <widget class="QPushButton" name="v1_trig_diode">
        <property name="text">
-        <string>Internal</string>
+        <string>External</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
        </property>
        <property name="checked">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>
      <item row="1" column="2">
-      <widget class="QDoubleSpinBox" name="v1_timing_fl">
+      <widget class="QDoubleSpinBox" name="v1_timing_diode">
        <property name="decimals">
         <number>3</number>
        </property>
@@ -476,7 +476,7 @@
      <item row="9" column="6">
       <widget class="QPushButton" name="c5_enabled">
        <property name="text">
-        <string>Disabled</string>
+        <string>Enable</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -489,7 +489,7 @@
      <item row="8" column="6">
       <widget class="QPushButton" name="c4_enabled">
        <property name="text">
-        <string>Disabled</string>
+        <string>Enable</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -519,13 +519,13 @@
      <item row="1" column="3">
       <widget class="QPushButton" name="v1_trig_qs">
        <property name="text">
-        <string>Internal</string>
+        <string>External</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
        </property>
        <property name="checked">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -555,7 +555,7 @@
       </widget>
      </item>
      <item row="6" column="2">
-      <widget class="QDoubleSpinBox" name="c2_timing_fl">
+      <widget class="QDoubleSpinBox" name="c2_timing_diode">
        <property name="decimals">
         <number>3</number>
        </property>
@@ -621,13 +621,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <item row="4" column="3">
       <widget class="QPushButton" name="c1_trig_qs">
        <property name="text">
-        <string>Internal</string>
+        <string>External</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
        </property>
        <property name="checked">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -643,7 +643,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <item row="0" column="2">
       <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>FL timing (ns)</string>
+        <string>Diode timing (ns)</string>
        </property>
       </widget>
      </item>
@@ -670,7 +670,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <item row="0" column="1">
       <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>FL trigger</string>
+        <string>Diode trigger</string>
        </property>
       </widget>
      </item>
@@ -695,7 +695,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       </widget>
      </item>
      <item row="7" column="2">
-      <widget class="QDoubleSpinBox" name="c3_timing_fl">
+      <widget class="QDoubleSpinBox" name="c3_timing_diode">
        <property name="decimals">
         <number>3</number>
        </property>
@@ -707,13 +707,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <item row="7" column="3">
       <widget class="QPushButton" name="c3_trig_qs">
        <property name="text">
-        <string>Internal</string>
+        <string>External</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
        </property>
        <property name="checked">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -725,15 +725,15 @@ li.checked::marker { content: &quot;\2612&quot;; }
       </widget>
      </item>
      <item row="8" column="1">
-      <widget class="QPushButton" name="c4_trig_fl">
+      <widget class="QPushButton" name="c4_trig_diode">
        <property name="text">
-        <string>Internal</string>
+        <string>External</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
        </property>
        <property name="checked">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -787,15 +787,15 @@ li.checked::marker { content: &quot;\2612&quot;; }
       </widget>
      </item>
      <item row="7" column="1">
-      <widget class="QPushButton" name="c3_trig_fl">
+      <widget class="QPushButton" name="c3_trig_diode">
        <property name="text">
-        <string>Internal</string>
+        <string>External</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
        </property>
        <property name="checked">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -863,26 +863,26 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <item row="9" column="3">
       <widget class="QPushButton" name="c5_trig_qs">
        <property name="text">
-        <string>Internal</string>
+        <string>External</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
        </property>
        <property name="checked">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>
      <item row="2" column="3">
       <widget class="QPushButton" name="v2_trig_qs">
        <property name="text">
-        <string>Internal</string>
+        <string>External</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
        </property>
        <property name="checked">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>
