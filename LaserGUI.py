@@ -34,8 +34,8 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
             ll.clicked.connect(self.set_trigger_laser)
             """
             - TODO(Brad): handle timing if in EI, EE, etc mode -- set defaults and disable timing
-            input if it is already fixed by the mode # noqa: TD003
-            - TODO(Brad): add diagnostic window to top of GUI to show laser status, etc # noqa: TD003
+            input if it is already fixed by the mode
+            - TODO(Brad): add diagnostic window to top of GUI to show laser status, etc
             """
 
         self.make_laser_dict()
