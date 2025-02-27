@@ -1,7 +1,7 @@
-import telnetlib3, asyncio
-import time
-import getpass
-from PyQt6.QtCore import pyqtSignal, QThread
+import asyncio
+
+import telnetlib3
+
 # from constants import LASERS
 
 HOST = "192.168.103.105"
@@ -11,8 +11,10 @@ LOGOUT = "$LOGOUT\n"
 STANDBY = "$STANDBY\n"
 STOP = "$STOP\n"
 
+
 def login_command(MAC):
-    return f"$LOGIN VR{MAC.replace(":","")[-6:]}\n"
+    return f"$LOGIN VR{MAC.replace(':', '')[-6:]}\n"
+
 
 async def send_receive(reader, writer, command):
     try:
@@ -27,10 +29,13 @@ async def send_receive(reader, writer, command):
         print("Could not connect to the laser")
         return reader, writer
 
+
 async def create_reader_writer(host=HOST, port=PORT, mac=MAC):
     try:
         async with asyncio.timeout(3):
-            reader, writer = await telnetlib3.open_connection(host=HOST, port=PORT, encoding="ascii")
+            reader, writer = await telnetlib3.open_connection(
+                host=HOST, port=PORT, encoding="ascii",
+            )
             print("Initialized")
     # except (ConnectionRefusedError, asyncio.TimeoutError):
     except IndexError:
