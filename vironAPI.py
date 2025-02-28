@@ -22,12 +22,10 @@ async def send_receive(reader, writer, command):
             writer.write(command)
             await writer.drain()
             resp = await reader.read(20)
-            print(resp)
             return resp
-    # except asyncio.TimeoutError:
-    except IndexError:
-        print("Could not connect to the laser")
-        return reader, writer
+    except asyncio.TimeoutError:
+    # except IndexError:
+        return "Could not connect to the laser"
 
 
 async def create_reader_writer(host=HOST, port=PORT, mac=MAC):
@@ -36,9 +34,7 @@ async def create_reader_writer(host=HOST, port=PORT, mac=MAC):
             reader, writer = await telnetlib3.open_connection(
                 host=HOST, port=PORT, encoding="ascii",
             )
-            print("Initialized")
-    # except (ConnectionRefusedError, asyncio.TimeoutError):
-    except IndexError:
-        print("Could not connect to the laser")
-        return None, None
-    return reader, writer
+    except (ConnectionRefusedError, asyncio.TimeoutError):
+    # except IndexError:
+        return None, None, "Could not connect to the laser"
+    return reader, writer, "Initialized"
