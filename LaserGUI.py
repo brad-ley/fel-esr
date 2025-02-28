@@ -1,18 +1,25 @@
 import asyncio
 import inspect
+from pydoc import ispath
 import sys
 import functools
 
+from pathlib import Path
+
+from numpy import save
 from constants import FLASHES, MINCURR
 from laser_timing import Ui_MainWindow
-from PyQt6.QtCore import QTimer
+from PyQt6.QtCore import QTimer, QSettings
 from PyQt6.QtWidgets import (
     QApplication,
     QMainWindow,
     QPushButton,
     QTextEdit,
     QTextBrowser,
-    QDoubleSpinBox
+    QDoubleSpinBox,
+    QComboBox,
+    QFileDialog,
+    QSlider
 )
 from vironAPI import create_reader_writer, login_command, send_receive
 
@@ -54,10 +61,21 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
             ll = self.ui.__dict__[l + "_timing_qs"]
             ll.valueChanged.connect(self.set_timings)
             """
-            - TODO(Brad): handle timing if in EI, EE, etc mode -- set defaults and disable timing
             input if it is already fixed by the mode
             - TODO(Brad): try with multiple lasers connected
             """
+        
+        ll = self.ui.__dict__["save_settings"]
+        ll.clicked.connect(self.save_settings)
+        ll = self.ui.__dict__["load_settings"]
+        ll.clicked.connect(self.load_settings)
+        # ll = self.ui.__dict__["unlock_connections"]
+        # ll.clicked.connect(self.unlock_connections)
+
+        ll = self.ui.__dict__["file_browser"]
+        ll.clicked.connect(self.open_file_dialog)
+
+        self.file_path_input = self.ui.__dict__["savepath"]
 
         self.make_laser_dict()
 
@@ -73,6 +91,16 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
 
         self.status_text = ""
         self.status_bar = self.findChildren(QTextBrowser, "status")[0]
+
+        settings = QSettings("SherwinLab", "LaserControlApp")
+        self.load_settings(settings)
+    
+    def open_file_dialog(self) -> None:
+        # options = QFileDialog.Option.DontUseNativeDialog
+        file_path, _ = QFileDialog.getOpenFileName(self, "Select File", "", "*.ini")
+        if file_path:
+            self.file_path_input.setText(file_path)
+
 
     def not_initialized_handler(func) -> object:
         @functools.wraps(func)
@@ -92,8 +120,6 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
                 self.status_text = resp + self.status_text
                 self.status_bar.setText(self.status_text)
         return wrapper
-            
-
 
     def get_laser_name(self, sender: object) -> str:
         return sender.objectName().split("_")[
@@ -178,13 +204,86 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
         return resp
 
     def set_timings(self, *args, **kwargs) -> None:
-        # TODO For some reason this shit is double-running
         resp = ""
         l = self.get_laser_name(self.sender())  # noqa: E741
-        try:
-            self.loop.run_until_complete(self.set_timings_laser(l))
-        except RuntimeError:
-            pass
+        self.loop.run_until_complete(self.set_timings_laser(l))
+
+    def save_settings(self):
+        self.loop.run_until_complete(self.save_settings_laser())
+    
+    async def save_settings_laser(self):
+        path = Path(self.file_path_input.toPlainText())
+        if not Path(path).parent.exists():
+            path = Path(__file__).parent.joinpath("settings.ini")
+        if not Path(path).suffix == ".ini":
+            path = Path(path).parent.joinpath(Path(path).stem + ".ini")
+
+        settings = QSettings(str(path), QSettings.Format.IniFormat)
+        buttons = self.findChildren(QPushButton)
+        timings = self.findChildren(QDoubleSpinBox)
+        inputs = self.findChildren(QTextEdit)
+        dropdowns = self.findChildren(QComboBox)
+        sliders = self.findChildren(QSlider)
+        # children = set(buttons + timings + inputs + dropdowns)
+        skipped_names = set(["status", "_enabled", "_settings", "unlock_connections", "_init", "send_times"]) # all the stuff that doesn't need to be saved
+
+        def save_widgets(settings):
+            for child in buttons:
+                if not any([child.objectName().endswith(ii) for ii in skipped_names]):
+                    settings.setValue(f"{child.objectName()}", child.isChecked())
+
+            for child in timings:
+                if not any([child.objectName().endswith(ii) for ii in skipped_names]):
+                    settings.setValue(f"{child.objectName()}", child.value())
+                    settings.setValue(f"{child.objectName()}_enabled", child.isEnabled())
+
+            for child in inputs:
+                if not any([child.objectName().endswith(ii) for ii in skipped_names]):
+                    settings.setValue(f"{child.objectName()}", child.toPlainText())
+                    settings.setValue(f"{child.objectName()}_enabled", child.isEnabled())
+
+            for child in dropdowns:
+                if not any([child.objectName().endswith(ii) for ii in skipped_names]):
+                    settings.setValue(f"{child.objectName()}", child.currentText())
+
+            for child in sliders:
+                if not any([child.objectName().endswith(ii) for ii in skipped_names]):
+                    settings.setValue(f"{child.objectName()}", child.value())
+
+        save_widgets(settings)
+        settings.sync()
+        settings = QSettings("SherwinLab", "LaserControlApp")
+        save_widgets(settings)
+        settings.sync()
+        self.status_text = self.status_text + f"Saved succesfully to {path.name}.\n"
+        self.status_bar.setText(self.status_text)
+
+    def load_settings(self, settings=None):
+        self.loop.run_until_complete(self.load_settings_laser(settings))
+
+    async def load_settings_laser(self, settings=None):
+        if not settings:
+            path = Path(self.file_path_input.toPlainText())
+            settings = QSettings(str(path), QSettings.Format.IniFormat)
+            loadfrom = path.name
+        else:
+            loadfrom = "previous"
+
+        for setting in settings.allKeys():
+            print(setting, settings.value(setting))
+            if "_timing_" in setting and not setting.endswith("_enabled"):
+                # this is the timing valuebox
+                # will also have sister value for enable
+                widget = self.ui.__dict__[setting]
+                widget.blockSignals(True)
+                widget.setValue(float(settings.value(setting)))
+                widget.setEnabled(settings.value(setting + "_enabled") == "true")
+                widget.blockSignals(False)
+        
+        self.status_text = self.status_text + f"Loaded from {loadfrom}.\n"
+        self.status_bar.setText(self.status_text)
+
+
 
     @not_initialized_handler
     async def set_timings_laser(self, laser) -> None:
@@ -193,6 +292,8 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
         for ind, timing_input in enumerate(timing_inputs):
             # should be sorted to have diode then input
             # want the timing input to be disabled if it is fixed by internal triggering
+            # signalling is blocked to not double-trigger
+            timing_input.blockSignals(True)
             timing_input.setEnabled(self.lasers[laser]["trig"][ind] == "E")
             if self.lasers[laser]["trig"] == "EI" and bool(ind):
                 # qs timing here is set to 179 us later than the diode
@@ -201,6 +302,7 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
                 # fl timing here is set to 179 us earlier than the qs
                 timing_input.setEnabled(False)
                 timing_input.setValue(timing_inputs[1].value() - self.lasers[laser]["qsdelay"])
+            timing_input.blockSignals(True)
         return f"Timing values set to FL={timing_inputs[0].value()}ns and QS={timing_inputs[1].value()}ns\n"
 
 

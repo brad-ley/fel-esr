@@ -12,7 +12,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1011, 309)
+        MainWindow.resize(1053, 391)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -516,11 +516,11 @@ class Ui_MainWindow(object):
         self.label_6 = QtWidgets.QLabel(parent=self.gridLayoutWidget)
         self.label_6.setObjectName("label_6")
         self.gridLayout.addWidget(self.label_6, 0, 3, 1, 1)
-        self.doubleSpinBox = QtWidgets.QDoubleSpinBox(parent=self.centralwidget)
-        self.doubleSpinBox.setGeometry(QtCore.QRect(130, 10, 91, 21))
-        self.doubleSpinBox.setDecimals(3)
-        self.doubleSpinBox.setMaximum(100000.0)
-        self.doubleSpinBox.setObjectName("doubleSpinBox")
+        self.overall_timing = QtWidgets.QDoubleSpinBox(parent=self.centralwidget)
+        self.overall_timing.setGeometry(QtCore.QRect(130, 10, 91, 21))
+        self.overall_timing.setDecimals(3)
+        self.overall_timing.setMaximum(100000.0)
+        self.overall_timing.setObjectName("overall_timing")
         self.label = QtWidgets.QLabel(parent=self.centralwidget)
         self.label.setGeometry(QtCore.QRect(10, 10, 111, 16))
         self.label.setObjectName("label")
@@ -530,15 +530,96 @@ class Ui_MainWindow(object):
         self.send_times.setChecked(False)
         self.send_times.setObjectName("send_times")
         self.status = QtWidgets.QTextBrowser(parent=self.centralwidget)
-        self.status.setGeometry(QtCore.QRect(690, 10, 300, 25))
+        self.status.setGeometry(QtCore.QRect(790, 10, 200, 25))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.status.sizePolicy().hasHeightForWidth())
         self.status.setSizePolicy(sizePolicy)
-        self.status.setMinimumSize(QtCore.QSize(300, 25))
-        self.status.setMaximumSize(QtCore.QSize(300, 25))
+        self.status.setMinimumSize(QtCore.QSize(200, 25))
+        self.status.setMaximumSize(QtCore.QSize(200, 25))
         self.status.setObjectName("status")
+        self.unlock_connections = QtWidgets.QPushButton(parent=self.centralwidget)
+        self.unlock_connections.setGeometry(QtCore.QRect(620, 10, 161, 24))
+        self.unlock_connections.setStyleSheet("QPushButton {\n"
+"    background-color: rgb(255, 170, 0);  /* orange background */\n"
+"    padding: 0px 0px;         /* Padding */\n"
+"    border-radius: 3px;        /* Rounded corners */\n"
+"    border: .5px solid gray;\n"
+"    color: black;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color:rgb(255, 150, 0);  /* Darker green on hover */\n"
+"}\n"
+"\n"
+"QPushButton:pressed {\n"
+"    background-color: rgb(255, 130, 0);  /* Even darker green when pressed */\n"
+"}\n"
+"")
+        self.unlock_connections.setCheckable(False)
+        self.unlock_connections.setChecked(False)
+        self.unlock_connections.setObjectName("unlock_connections")
+        self.load_settings = QtWidgets.QPushButton(parent=self.centralwidget)
+        self.load_settings.setGeometry(QtCore.QRect(680, 330, 81, 24))
+        self.load_settings.setStyleSheet("QPushButton {\n"
+"    background-color:rgb(170, 255, 127);  /* orange background */\n"
+"    padding: 0px 0px;         /* Padding */\n"
+"    border-radius: 3px;        /* Rounded corners */\n"
+"    border: .5px solid gray;\n"
+"    color: black;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color:rgb(150, 255, 107);  /* Darker green on hover */\n"
+"}\n"
+"\n"
+"QPushButton:pressed {\n"
+"    background-color:rgb(130, 255, 87);  /* Even darker green when pressed */\n"
+"}\n"
+"")
+        self.load_settings.setCheckable(False)
+        self.load_settings.setChecked(False)
+        self.load_settings.setObjectName("load_settings")
+        self.save_settings = QtWidgets.QPushButton(parent=self.centralwidget)
+        self.save_settings.setGeometry(QtCore.QRect(590, 330, 81, 24))
+        self.save_settings.setStyleSheet("QPushButton {\n"
+"    background-color: rgb(255, 170, 0);  /* orange background */\n"
+"    padding: 0px 0px;         /* Padding */\n"
+"    border-radius: 3px;        /* Rounded corners */\n"
+"    border: .5px solid gray;\n"
+"    color: black;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color:rgb(255, 150, 0);  /* Darker green on hover */\n"
+"}\n"
+"\n"
+"QPushButton:pressed {\n"
+"    background-color: rgb(255, 130, 0);  /* Even darker green when pressed */\n"
+"}\n"
+"")
+        self.save_settings.setCheckable(False)
+        self.save_settings.setChecked(False)
+        self.save_settings.setObjectName("save_settings")
+        self.file_browser = QtWidgets.QPushButton(parent=self.centralwidget)
+        self.file_browser.setGeometry(QtCore.QRect(10, 330, 75, 24))
+        self.file_browser.setCheckable(False)
+        self.file_browser.setChecked(False)
+        self.file_browser.setObjectName("file_browser")
+        self.savepath = QtWidgets.QTextEdit(parent=self.centralwidget)
+        self.savepath.setEnabled(True)
+        self.savepath.setGeometry(QtCore.QRect(100, 330, 400, 25))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.savepath.sizePolicy().hasHeightForWidth())
+        self.savepath.setSizePolicy(sizePolicy)
+        self.savepath.setMinimumSize(QtCore.QSize(400, 25))
+        self.savepath.setMaximumSize(QtCore.QSize(400, 25))
+        self.savepath.setBaseSize(QtCore.QSize(0, 0))
+        self.savepath.setMarkdown("")
+        self.savepath.setObjectName("savepath")
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(parent=MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -635,3 +716,16 @@ class Ui_MainWindow(object):
         self.label.setText(_translate("MainWindow", "Overall timing (ns)"))
         self.send_times.setText(_translate("MainWindow", "Set times"))
         self.status.setPlaceholderText(_translate("MainWindow", "Status"))
+        self.unlock_connections.setText(_translate("MainWindow", "Unlock connection settings"))
+        self.load_settings.setText(_translate("MainWindow", "Load settings"))
+        self.save_settings.setText(_translate("MainWindow", "Save settings"))
+        self.file_browser.setText(_translate("MainWindow", "Browse"))
+        self.savepath.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:\'Segoe UI\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
+        self.savepath.setPlaceholderText(_translate("MainWindow", "Path"))
