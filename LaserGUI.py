@@ -82,8 +82,6 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
 
         self.file_path_input = self.ui.__dict__["savepath"]
 
-        self.make_laser_dict()
-
         if sys.platform == "win32":
             asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
@@ -100,6 +98,8 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
         self.settings_config = QSettings("SherwinLab", "LaserControlApp")
         self.load_settings()
 
+        self.make_laser_dict()
+
     def open_file_dialog(self) -> None:
         # options = QFileDialog.Option.DontUseNativeDialog
         file_path, _ = QFileDialog.getOpenFileName(self, "Select File", "", "*.ini")
@@ -111,6 +111,8 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
         connections += [ii for ii in self.findChildren(QComboBox) if ii.objectName().endswith("_com")]
         for conn in connections:
             conn.setEnabled(not conn.isEnabled())
+            if not conn.isEnabled():
+                self.make_laser_dict()
             self.sender().setText("Lock connection settings" if conn.isEnabled() else "Unlock connection settings")
             self.sender().setStyleSheet("QPushButton {\n"
 "    background-color:rgb(170, 255, 127);  /* orange background */\n"
@@ -356,6 +358,8 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
                     elif setting.endswith("_com"):
                         # TODO (Brad) add dropdown loading
                         pass
+                    elif setting == "savepath":
+                        widget.setText(settings.value(setting))
                     widget.blockSignals(False)
         
         self.status_update(resp)
@@ -401,12 +405,10 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
                 status_text += f"{laser}: {resp}\n"
                 maxcurr = await send_receive(reader, writer, "$MAXCURR ?\n")
                 qsdelay = await send_receive(reader, writer, "$QSDELAY ?\n")
-                (
-                    self.lasers[laser]["reader"],
-                    self.lasers[laser]["writer"],
-                    self.lasers[laser]["maxcurr"],
-                    self.lasers[laser]["qsdelay"],
-                ) = reader, writer, float(maxcurr.split(" ")[1]), float(qsdelay.split(" ")[1]) * 1000 # switch qsdelay to ns from us
+                self.lasers[laser]["reader"] = reader
+                self.lasers[laser]["writer"] = writer
+                self.lasers[laser]["maxcurr"] = float(maxcurr.replace("\r", "").replace("\x00","").split(" ")[1]) 
+                self.lasers[laser]["qsdelay"] = float(qsdelay.replace("\r", "").replace("\x00","").split(" ")[1]) * 1000 # switch qsdelay to ns from us
                 status_text += f"{laser}: {maxcurr}\n"
                 status_text += f"{laser}: {qsdelay}\n"
             resp = await send_receive(
@@ -426,9 +428,6 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
     @not_initialized_handler
     async def send_receive_laser(self, laser: str, command: str) -> str:
         resp = await send_receive(self.lasers[laser]["reader"], self.lasers[laser]["writer"], command)
-        print("===========")
-        print(resp)
-        print("===========")
         return f"{laser}: {resp}\n"
         
 

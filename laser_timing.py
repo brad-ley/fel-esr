@@ -661,6 +661,7 @@ class Ui_MainWindow(object):
 "li.checked::marker { content: \"\\2612\"; }\n"
 "</style></head><body style=\" font-family:\'Segoe UI\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">192.168.103.105:25</p></body></html>"))
+        self.v1_ip.setPlaceholderText(_translate("MainWindow", "IP address:PORT"))
         self.c5_init.setText(_translate("MainWindow", "Initialize"))
         self.v2_init.setText(_translate("MainWindow", "Initialize"))
         self.label_7.setText(_translate("MainWindow", "Enabled"))
@@ -678,6 +679,7 @@ class Ui_MainWindow(object):
 "li.checked::marker { content: \"\\2612\"; }\n"
 "</style></head><body style=\" font-family:\'Segoe UI\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">00:80:A3:6B:E4:1D</p></body></html>"))
+        self.v1_mac.setPlaceholderText(_translate("MainWindow", "MAC address"))
         self.c4_enabled.setText(_translate("MainWindow", "Fire"))
         self.c1_trig_qs.setText(_translate("MainWindow", "External"))
         self.label_15.setText(_translate("MainWindow", "CNI 4"))
@@ -685,6 +687,9 @@ class Ui_MainWindow(object):
         self.c3_enabled.setText(_translate("MainWindow", "Fire"))
         self.label_17.setText(_translate("MainWindow", "Initialize"))
         self.v1_enabled.setText(_translate("MainWindow", "Fire"))
+        self.v2_mac.setMarkdown(_translate("MainWindow", "00:80:A3:6B:E4:65\n"
+"\n"
+""))
         self.v2_mac.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -692,7 +697,8 @@ class Ui_MainWindow(object):
 "li.unchecked::marker { content: \"\\2610\"; }\n"
 "li.checked::marker { content: \"\\2612\"; }\n"
 "</style></head><body style=\" font-family:\'Segoe UI\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">00:80:A3:6B:E4:1E</p></body></html>"))
+"<p style=\" margin-top:6px; margin-bottom:6px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">00:80:A3:6B:E4:65</p></body></html>"))
+        self.v2_mac.setPlaceholderText(_translate("MainWindow", "MAC address"))
         self.v2_trig_diode.setText(_translate("MainWindow", "External"))
         self.c4_trig_qs.setText(_translate("MainWindow", "External"))
         self.c2_trig_diode.setText(_translate("MainWindow", "External"))
@@ -705,6 +711,9 @@ class Ui_MainWindow(object):
         self.c2_enabled.setText(_translate("MainWindow", "Fire"))
         self.label_16.setText(_translate("MainWindow", "CNI 5"))
         self.c5_enabled.setText(_translate("MainWindow", "Fire"))
+        self.v2_ip.setMarkdown(_translate("MainWindow", "192.168.103.103:23\n"
+"\n"
+""))
         self.v2_ip.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -712,7 +721,8 @@ class Ui_MainWindow(object):
 "li.unchecked::marker { content: \"\\2610\"; }\n"
 "li.checked::marker { content: \"\\2612\"; }\n"
 "</style></head><body style=\" font-family:\'Segoe UI\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">192.168.103.107:27</p></body></html>"))
+"<p style=\" margin-top:6px; margin-bottom:6px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">192.168.103.103:23</p></body></html>"))
+        self.v2_ip.setPlaceholderText(_translate("MainWindow", "IP address:PORT"))
         self.v1_trig_qs.setText(_translate("MainWindow", "External"))
         self.v2_enabled.setText(_translate("MainWindow", "Fire"))
         self.label_9.setText(_translate("MainWindow", "Viron 1"))
