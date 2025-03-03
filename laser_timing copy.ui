@@ -738,18 +738,18 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <widget class="QPushButton" name="c4_enabled">
        <property name="minimumSize">
         <size>
-         <width>80</width>
+         <width>60</width>
          <height>0</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>80</width>
+         <width>60</width>
          <height>16777215</height>
         </size>
        </property>
        <property name="text">
-        <string>Enable</string>
+        <string>Fire</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -838,18 +838,18 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <widget class="QPushButton" name="c3_enabled">
        <property name="minimumSize">
         <size>
-         <width>80</width>
+         <width>60</width>
          <height>0</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>80</width>
+         <width>60</width>
          <height>16777215</height>
         </size>
        </property>
        <property name="text">
-        <string>Enable</string>
+        <string>Fire</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -895,18 +895,18 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <widget class="QPushButton" name="v1_enabled">
        <property name="minimumSize">
         <size>
-         <width>80</width>
+         <width>60</width>
          <height>0</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>80</width>
+         <width>60</width>
          <height>16777215</height>
         </size>
        </property>
        <property name="text">
-        <string>Enable</string>
+        <string>Fire</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -1168,18 +1168,18 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <widget class="QPushButton" name="c2_enabled">
        <property name="minimumSize">
         <size>
-         <width>80</width>
+         <width>60</width>
          <height>0</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>80</width>
+         <width>60</width>
          <height>16777215</height>
         </size>
        </property>
        <property name="text">
-        <string>Enable</string>
+        <string>Fire</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -1226,18 +1226,18 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <widget class="QPushButton" name="c5_enabled">
        <property name="minimumSize">
         <size>
-         <width>80</width>
+         <width>60</width>
          <height>0</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>80</width>
+         <width>60</width>
          <height>16777215</height>
         </size>
        </property>
        <property name="text">
-        <string>Enable</string>
+        <string>Fire</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -1353,18 +1353,18 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <widget class="QPushButton" name="v2_enabled">
        <property name="minimumSize">
         <size>
-         <width>80</width>
+         <width>60</width>
          <height>0</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>80</width>
+         <width>60</width>
          <height>16777215</height>
         </size>
        </property>
        <property name="text">
-        <string>Enable</string>
+        <string>Fire</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -1385,18 +1385,18 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <widget class="QPushButton" name="c1_enabled">
        <property name="minimumSize">
         <size>
-         <width>80</width>
+         <width>60</width>
          <height>0</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>80</width>
+         <width>60</width>
          <height>16777215</height>
         </size>
        </property>
        <property name="text">
-        <string>Enable</string>
+        <string>Fire</string>
        </property>
        <property name="checkable">
         <bool>true</bool>

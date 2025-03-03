@@ -20,6 +20,7 @@ from PyQt6.QtWidgets import (
     QComboBox,
     QFileDialog,
     QSlider,
+    QMessageBox
 )
 from PyQt6.QtGui import QTextCursor
 from vironAPI import create_reader_writer, login_command, send_receive
@@ -187,11 +188,11 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
     def enable_laser(self) -> None:
         l = self.get_laser_name(self.sender())  # noqa: E741
         if l.startswith("v"):
-            if self.sender().text() == "Enable":
+            if self.sender().text() == "Fire":
                 self.loop.run_until_complete(self.send_receive_laser(l, "$FIRE\n"))
                 self.sender().setText("Disable")
             else:
-                self.sender().setText("Enable")
+                self.sender().setText("Fire")
                 self.loop.run_until_complete(self.send_receive_laser(l, "$STANDBY\n"))
 
     def initialize(self) -> None:
@@ -290,15 +291,24 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
         if not isinstance(self.sender(), QApplication):
             path = Path(self.file_path_input.toPlainText())
             if Path(path).parent.exists() and Path(path).suffix == ".ini":
-                # path = Path(__file__).parent.joinpath("settings.ini")
-                # path = Path(path).parent.joinpath(Path(path).stem + ".ini")
+                save = False
+                if Path(path).exists():
+                    response = QMessageBox.warning(self, "File Overwrite Warning", f"The file {path} already exists. Do you want to overwrite it?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, QMessageBox.StandardButton.No)
 
-                settings = QSettings(str(path), QSettings.Format.IniFormat)
+                    if response == QMessageBox.StandardButton.Yes:
+                        save = True
+                    else:
+                        resp = "File save cancelled.\n"
+                else:
+                    save = True
+                
+                if save:
+                    settings = QSettings(str(path), QSettings.Format.IniFormat)
 
-                save_widgets(settings)
-                settings.sync()
+                    save_widgets(settings)
+                    settings.sync()
 
-                resp  = f"Saved succesfully to {path.name}.\n" 
+                    resp  = f"Saved succesfully to {path.name}.\n" 
             else:
                 resp = f"'.ini' path error.\n" 
 
@@ -340,6 +350,7 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
                         widget.setValue(int(settings.value(setting)))
                     elif "_trig_" in setting:
                         widget.setChecked(settings.value(setting) == "true")
+                        widget.setText("Internal" if settings.value(setting) == "true" else "External")
                     elif setting.endswith("_ip") or setting.endswith("_mac"):
                         widget.setText(settings.value(setting))
                     elif setting.endswith("_com"):
