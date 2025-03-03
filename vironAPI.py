@@ -16,7 +16,7 @@ def login_command(MAC):
     return f"$LOGIN VR{MAC.replace(':', '')[-6:]}\n"
 
 
-async def send_receive(reader, writer, command):
+async def send_receive(reader, writer, command) -> str:
     try:
         async with asyncio.timeout(3):
             writer.write(command)
