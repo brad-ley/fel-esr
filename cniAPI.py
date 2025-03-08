@@ -1,14 +1,18 @@
 import serial
+import asyncio
+from functools import partial
 
-def make_connection(com) -> serial:
-    return serial.Serial(
-        port=com,
-        baudrate=115200,
-        bytesize=serial.EIGHTBITS,
-        parity=serial.PARITY_NONE,
-        stopbits=serial.STOPBITS_ONE,
-        timeout=1
-    )
+async def make_connection(com) -> serial:
+    loop = asyncio.get_event_loop()
+    kwargs = {
+            "port":com,
+            "baudrate":115200,
+            "bytesize":serial.EIGHTBITS,
+            "parity":serial.PARITY_NONE,
+            "stopbits":serial.STOPBITS_ONE,
+            "timeout":1} 
+    return await loop.run_in_executor(None,
+        partial(serial.Serial, **kwargs))
 
 def hex_sequence(data: bytearray) -> str:
     return ' '.join(format(b, '02X') for b in data)
@@ -31,24 +35,29 @@ def parse_hex_sequence(data: str):
 
 
 # Function to send data
-def send_data(ser, data: bytearray):
+def send_data(ser: serial, data: bytearray):
     ser.write(data)  # Send data as bytes
     return ser
 
 # Function to receive data
 def receive_data(ser):
     data = ser.readline()  # Read a line of data from the serial buffer
+    if data == b'':
+        raise serial.SerialException("No connection found")
     return ser, data
 
 # Example communication with the serial device
-def send_receive_cni(ser, data):
+async def send_receive_cni(ser, data):
     # try:
     # data = bytearray([0x7F, 5, 0x23, 6, 0, 0, 0])  # Test data
     checksum = crc16(data)
     data.extend(checksum.to_bytes(2, 'little'))
 
-    ser = send_data(ser, data)  # Send a message
-    ser, resp = receive_data(ser)  # Read response from the device
+    loop = asyncio.get_event_loop()
+
+    args = [ser, data]
+    ser = await loop.run_in_executor(None, partial(send_data, *args))  # Send a message
+    ser, resp = await loop.run_in_executor(None, partial(receive_data, ser))  # Read response from the device
     # outstr = f"{'Sent':<10} : {hex_sequence(data)}\n{'Response':<10} : {hex_sequence(resp)}"
     # outstr += f"{'Translated':<10} : {parse_hex_sequence(hex_sequence(resp))}"
     # return outstr
