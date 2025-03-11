@@ -541,12 +541,12 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
             loadfrom = "previous"
             resp = f"Loaded from {loadfrom}.\n"
 
-        try:
-            if settings is not None:
-                for setting in settings.allKeys():
-                    if not setting.endswith(
-                        "_enabled",
-                    ):  # skip the buttons 'enabled' settings since they do not correspond to a real widget
+        if settings is not None:
+            for setting in settings.allKeys():
+                if not setting.endswith(
+                    "_enabled",
+                ):  # skip the buttons 'enabled' settings since they do not correspond to a real widget
+                    try:
                         widget = self.ui.__dict__[setting]
                         widget.blockSignals(True)
                         if "_timing" in setting and not setting.endswith("_enabled"):
@@ -568,9 +568,8 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
                         elif setting == "savepath":
                             widget.setText(settings.value(setting))
                         widget.blockSignals(False)
-
-        except KeyError:
-            pass
+                    except KeyError:
+                        pass
 
         self.status_update(resp)
 
