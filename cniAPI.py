@@ -108,4 +108,10 @@ def crc16(data: bytearray) -> int:
     
     return crc & 0xFFFF  # Return CRC as a 16-bit value
 
-import serial
+
+if __name__ == "__main__":
+    loop = asyncio.new_event_loop()
+    ser = loop.run_until_complete(make_connection("COM3"))
+    data = bytearray([0x7F, 5, 0x01, 0x01, 0, 0, 0])  # Test data
+    resp = loop.run_until_complete(send_receive_cni(ser, data))
+    print(resp)

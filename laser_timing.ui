@@ -46,27 +46,39 @@
      </item>
      <item row="1" column="4">
       <widget class="QDoubleSpinBox" name="v1_timing_qs">
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="inputMethodHints">
+        <set>Qt::ImhPreferNumbers</set>
+       </property>
        <property name="decimals">
         <number>3</number>
        </property>
        <property name="minimum">
-        <double>-1000000.000000000000000</double>
+        <double>-100000000.000000000000000</double>
        </property>
        <property name="maximum">
-        <double>1000000.000000000000000</double>
+        <double>100000000.000000000000000</double>
        </property>
       </widget>
      </item>
      <item row="7" column="2">
       <widget class="QDoubleSpinBox" name="c3_timing_diode">
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="inputMethodHints">
+        <set>Qt::ImhPreferNumbers</set>
+       </property>
        <property name="decimals">
         <number>3</number>
        </property>
        <property name="minimum">
-        <double>-1000000.000000000000000</double>
+        <double>-100000000.000000000000000</double>
        </property>
        <property name="maximum">
-        <double>1000000.000000000000000</double>
+        <double>100000000.000000000000000</double>
        </property>
       </widget>
      </item>
@@ -172,27 +184,39 @@
      </item>
      <item row="8" column="4">
       <widget class="QDoubleSpinBox" name="c4_timing_qs">
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="inputMethodHints">
+        <set>Qt::ImhPreferNumbers</set>
+       </property>
        <property name="decimals">
         <number>3</number>
        </property>
        <property name="minimum">
-        <double>-1000000.000000000000000</double>
+        <double>-100000000.000000000000000</double>
        </property>
        <property name="maximum">
-        <double>1000000.000000000000000</double>
+        <double>100000000.000000000000000</double>
        </property>
       </widget>
      </item>
      <item row="6" column="2">
       <widget class="QDoubleSpinBox" name="c2_timing_diode">
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="inputMethodHints">
+        <set>Qt::ImhPreferNumbers</set>
+       </property>
        <property name="decimals">
         <number>3</number>
        </property>
        <property name="minimum">
-        <double>-1000000.000000000000000</double>
+        <double>-100000000.000000000000000</double>
        </property>
        <property name="maximum">
-        <double>1000000.000000000000000</double>
+        <double>100000000.000000000000000</double>
        </property>
       </widget>
      </item>
@@ -558,14 +582,20 @@ li.checked::marker { content: &quot;\2612&quot;; }
      </item>
      <item row="1" column="2">
       <widget class="QDoubleSpinBox" name="v1_timing_diode">
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="inputMethodHints">
+        <set>Qt::ImhPreferNumbers</set>
+       </property>
        <property name="decimals">
         <number>3</number>
        </property>
        <property name="minimum">
-        <double>-1000000.000000000000000</double>
+        <double>-100000000.000000000000000</double>
        </property>
        <property name="maximum">
-        <double>1000000.000000000000000</double>
+        <double>100000000.000000000000000</double>
        </property>
       </widget>
      </item>
@@ -799,14 +829,20 @@ li.checked::marker { content: &quot;\2612&quot;; }
      </item>
      <item row="4" column="2">
       <widget class="QDoubleSpinBox" name="c1_timing_diode">
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="inputMethodHints">
+        <set>Qt::ImhPreferNumbers</set>
+       </property>
        <property name="decimals">
         <number>3</number>
        </property>
        <property name="minimum">
-        <double>-1000000.000000000000000</double>
+        <double>-100000000.000000000000000</double>
        </property>
        <property name="maximum">
-        <double>1000000.000000000000000</double>
+        <double>100000000.000000000000000</double>
        </property>
       </widget>
      </item>
@@ -819,24 +855,39 @@ li.checked::marker { content: &quot;\2612&quot;; }
      </item>
      <item row="9" column="4">
       <widget class="QDoubleSpinBox" name="c5_timing_qs">
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="inputMethodHints">
+        <set>Qt::ImhPreferNumbers</set>
+       </property>
        <property name="decimals">
         <number>3</number>
        </property>
+       <property name="minimum">
+        <double>-100000000.000000000000000</double>
+       </property>
        <property name="maximum">
-        <double>100000.000000000000000</double>
+        <double>100000000.000000000000000</double>
        </property>
       </widget>
      </item>
      <item row="6" column="4">
       <widget class="QDoubleSpinBox" name="c2_timing_qs">
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="inputMethodHints">
+        <set>Qt::ImhPreferNumbers</set>
+       </property>
        <property name="decimals">
         <number>3</number>
        </property>
        <property name="minimum">
-        <double>-1000000.000000000000000</double>
+        <double>-100000000.000000000000000</double>
        </property>
        <property name="maximum">
-        <double>1000000.000000000000000</double>
+        <double>100000000.000000000000000</double>
        </property>
       </widget>
      </item>
@@ -1142,14 +1193,20 @@ li.checked::marker { content: &quot;\2612&quot;; }
      </item>
      <item row="2" column="4">
       <widget class="QDoubleSpinBox" name="v2_timing_qs">
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="inputMethodHints">
+        <set>Qt::ImhPreferNumbers</set>
+       </property>
        <property name="decimals">
         <number>3</number>
        </property>
        <property name="minimum">
-        <double>-1000000.000000000000000</double>
+        <double>-100000000.000000000000000</double>
        </property>
        <property name="maximum">
-        <double>1000000.000000000000000</double>
+        <double>100000000.000000000000000</double>
        </property>
       </widget>
      </item>
@@ -1205,27 +1262,39 @@ li.checked::marker { content: &quot;\2612&quot;; }
      </item>
      <item row="8" column="2">
       <widget class="QDoubleSpinBox" name="c4_timing_diode">
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="inputMethodHints">
+        <set>Qt::ImhPreferNumbers</set>
+       </property>
        <property name="decimals">
         <number>3</number>
        </property>
        <property name="minimum">
-        <double>-1000000.000000000000000</double>
+        <double>-100000000.000000000000000</double>
        </property>
        <property name="maximum">
-        <double>1000000.000000000000000</double>
+        <double>100000000.000000000000000</double>
        </property>
       </widget>
      </item>
      <item row="2" column="2">
       <widget class="QDoubleSpinBox" name="v2_timing_diode">
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="inputMethodHints">
+        <set>Qt::ImhPreferNumbers</set>
+       </property>
        <property name="decimals">
         <number>3</number>
        </property>
        <property name="minimum">
-        <double>-1000000.000000000000000</double>
+        <double>-100000000.000000000000000</double>
        </property>
        <property name="maximum">
-        <double>1000000.000000000000000</double>
+        <double>100000000.000000000000000</double>
        </property>
       </widget>
      </item>
@@ -1263,27 +1332,39 @@ li.checked::marker { content: &quot;\2612&quot;; }
      </item>
      <item row="4" column="4">
       <widget class="QDoubleSpinBox" name="c1_timing_qs">
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="inputMethodHints">
+        <set>Qt::ImhPreferNumbers</set>
+       </property>
        <property name="decimals">
         <number>3</number>
        </property>
        <property name="minimum">
-        <double>-1000000.000000000000000</double>
+        <double>-100000000.000000000000000</double>
        </property>
        <property name="maximum">
-        <double>1000000.000000000000000</double>
+        <double>100000000.000000000000000</double>
        </property>
       </widget>
      </item>
      <item row="7" column="4">
       <widget class="QDoubleSpinBox" name="c3_timing_qs">
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="inputMethodHints">
+        <set>Qt::ImhPreferNumbers</set>
+       </property>
        <property name="decimals">
         <number>3</number>
        </property>
        <property name="minimum">
-        <double>-1000000.000000000000000</double>
+        <double>-100000000.000000000000000</double>
        </property>
        <property name="maximum">
-        <double>1000000.000000000000000</double>
+        <double>100000000.000000000000000</double>
        </property>
       </widget>
      </item>
@@ -1363,11 +1444,20 @@ li.checked::marker { content: &quot;\2612&quot;; }
      </item>
      <item row="9" column="2">
       <widget class="QDoubleSpinBox" name="c5_timing_diode">
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="inputMethodHints">
+        <set>Qt::ImhPreferNumbers</set>
+       </property>
        <property name="decimals">
         <number>3</number>
        </property>
+       <property name="minimum">
+        <double>-100000000.000000000000000</double>
+       </property>
        <property name="maximum">
-        <double>100000.000000000000000</double>
+        <double>100000000.000000000000000</double>
        </property>
       </widget>
      </item>
@@ -1440,17 +1530,20 @@ li.checked::marker { content: &quot;\2612&quot;; }
    <widget class="QDoubleSpinBox" name="overall_timing">
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>120</x>
       <y>10</y>
-      <width>91</width>
+      <width>111</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="inputMethodHints">
+     <set>Qt::ImhPreferNumbers</set>
     </property>
     <property name="decimals">
      <number>3</number>
     </property>
     <property name="maximum">
-     <double>100000.000000000000000</double>
+     <double>10000000.000000000000000</double>
     </property>
    </widget>
    <widget class="QLabel" name="label">
@@ -1463,7 +1556,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      </rect>
     </property>
     <property name="text">
-     <string>Overall timing (ns)</string>
+     <string>Overall timing (us)</string>
     </property>
    </widget>
    <widget class="QPushButton" name="send_times">

@@ -12,7 +12,7 @@ import numpy as np
 from numpy import save
 from constants import FLASHES, MINCURR
 from laser_timing import Ui_MainWindow
-from PyQt6.QtCore import QTimer, QSettings
+from PyQt6.QtCore import QTimer, QSettings, QLocale
 from PyQt6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -28,6 +28,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import QTextCursor
 from vironAPI import create_reader_writer, login_command, send_receive
 from cniAPI import make_connection, crc16, send_receive_cni, hex_sequence, parse_hex_sequence
+import DG645
 
 def bool_to_code(b: bool) -> str:  # noqa: FBT001 ignore the positional boolean
     return "I" if b else "E"
@@ -46,24 +47,22 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
         # lasers = [v for v in self.ui.__dict__.values() if '_enabled' in v.objectName()]
         for l in self.lasers:  # noqa: E741
             ll = self.ui.__dict__[l + "_enabled"]
-            ll.clicked.connect(self.enable_laser)
+            ll.clicked.connect(self.enable)
             ll = self.ui.__dict__[l + "_init"]
-            ll.clicked.connect(self.initialize)
+            ll.clicked.connect(self.initialize_handler)
             ll = self.ui.__dict__[l + "_power"]
-            ll.sliderReleased.connect(self.set_power_laser)
+            ll.sliderReleased.connect(self.set_power)
             ld = self.ui.__dict__[l + "_trig_diode"]
-            ld.clicked.connect(self.set_trigger_laser)
+            ld.clicked.connect(self.set_trigger)
             ld.clicked.connect(self.set_timings)
 
             lq = self.ui.__dict__[l + "_trig_qs"]
-            lq.clicked.connect(self.set_trigger_laser)
+            lq.clicked.connect(self.set_trigger)
             lq.clicked.connect(self.set_timings)
             self.lasers[l]["trig"] = bool_to_code(ld.isChecked()) + bool_to_code(lq.isChecked())
             
             ll = self.ui.__dict__[l + "_timing_diode"]
             ll.valueChanged.connect(self.set_timings)
-            if not ld.isChecked():
-                ll.setEnabled(False)
             ll = self.ui.__dict__[l + "_timing_qs"]
             ll.valueChanged.connect(self.set_timings)
             
@@ -71,11 +70,18 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
                 ll = self.ui.__dict__[l + "_com"]
                 for port in comports():
                     ll.addItem(port.device.split("-")[0].strip())
+
+
+        # double_spin_boxes = self.findChildren(QDoubleSpinBox)
+        # for box in double_spin_boxes:
+        #     # Use QLocale to set scientific notation for large and small numbers
+        #     locale = QLocale(QLocale.Language.English, QLocale.Country.UnitedStates)
+        #     box.setLocale(locale)
         
         ll = self.ui.__dict__["save_settings"]
         ll.clicked.connect(self.save_settings)
         QApplication.instance().aboutToQuit.connect(self.save_settings)
-        QApplication.instance().aboutToQuit.connect(self.close_serial)
+        QApplication.instance().aboutToQuit.connect(self.close_connections)
         # want to run the save settings to device .ini when app is closed so that if it is reopened it will have the same settings
     
         ll = self.ui.__dict__["load_settings"]
@@ -101,10 +107,84 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
         self.status_text = ""
         self.status_bar = self.findChildren(QTextBrowser, "status")[0]
 
+        times = self.ui.__dict__["send_times"]
+        times.clicked.connect(self.send_times)
+
         self.settings_config = QSettings("SherwinLab", "LaserControlApp")
         self.load_settings()
 
         self.make_laser_dict()
+
+    def send_times(self) -> None:
+        d = self.sender()
+        self.loop.run_until_complete(self.send_times_device(d))
+    
+    async def send_times_device(self, l) -> None:
+        if not hasattr(self, "delay_gen") or self.delay_gen["reader"] is None or self.delay_gen["writer"] is None:
+            reader, writer, resp = await DG645.connect(ip="192.168.103.164", port="5025")
+            self.delay_gen = {}
+            self.delay_gen["reader"], self.delay_gen["writer"] = reader, writer
+            self.status_update(resp)
+
+        if self.delay_gen["reader"] is not None and self.delay_gen["writer"] is not None:
+            cnis = [ll for ll in self.lasers if ll.startswith("c")]
+            cni_diodes = [self.ui.__dict__[ll + "_timing_diode"].value() for ll in cnis]
+            cni_qs = [self.ui.__dict__[ll + "_timing_qs"].value() for ll in cnis]
+
+            virons = [ll for ll in self.lasers if ll.startswith("v")]
+            viron_diodes = [self.ui.__dict__[ll + "_timing_diode"].value() for ll in virons]
+            viron_qs = [self.ui.__dict__[ll + "_timing_qs"].value() for ll in virons]
+ 
+            t0 = self.ui.__dict__["overall_timing"].value() * 1e3 # convert to ns
+            A, B = t0, t0
+ 
+            for laser in self.lasers:
+                self.ui.__dict__[laser + "_timing_diode"].blockSignals(True)
+                self.ui.__dict__[laser + "_timing_qs"].blockSignals(True)
+                # block these as their values are about to change
+
+            if all(np.diff(cni_diodes) < 1000): # want to make sure they aren't sent too far apart -- within 1 ns all of them
+                A = t0 + np.mean(cni_diodes)
+                for laser in cnis:
+                    self.ui.__dict__[laser + "_timing_diode"].setValue(np.mean(cni_diodes))
+            else:
+                self.status_update(f"CNI diode trigger values are too far apart (<1 us required).")
+
+            if all(np.diff(viron_diodes) < 1000):
+                B = t0 + np.mean(viron_diodes)
+                for laser in virons:
+                    self.ui.__dict__[laser + "_timing_diode"].setValue(np.mean(viron_diodes))
+            else:
+                self.status_update(f"Viron diode trigger values are too far apart (<1 us required).")
+
+            for laser in self.lasers:
+                self.ui.__dict__[laser + "_timing_diode"].blockSignals(False)
+                self.ui.__dict__[laser + "_timing_qs"].blockSignals(False)
+
+            # TODO this needs to be a QLineEdit with some numpy float validation
+            C = self.ui.__dict__["c1_timing_qs"].value()
+            D = self.ui.__dict__["c2_timing_qs"].value()
+            E = self.ui.__dict__["c3_timing_qs"].value()
+            F = self.ui.__dict__["c4_timing_qs"].value()
+            X = self.ui.__dict__["c5_timing_qs"].value()
+
+            G = self.ui.__dict__["v1_timing_qs"].value()
+            H = self.ui.__dict__["v2_timing_qs"].value()
+
+            outstr = ""
+            for ind, chan in enumerate([A, B, C, D, E, F, G, H]):
+                outstr += await DG645.send_receive(self.delay_gen["reader"], self.delay_gen["writer"], f"DLAY {ind},0,{chan*1e-6:f}\n")
+                # outstr += await DG645.send_receive(self.sock, f"LINK {ind},0\n".encode("utf-8"))
+                # outstr += await DG645.send_receive(self.sock, f"DISP 11,{ind}\n".encode("utf-8"))
+
+            # outstr += await DG645.send_receive(self.sock, f"TSRC 1\n".encode("utf-8")) # trigger externally with rising edge
+            # outstr += await DG645.send_receive(self.sock, f"HOLD 1e-3\n".encode("utf-8")) # holdoff 1 ms to account for some noise if there is any
+            # outstr += await DG645.send_receive(self.sock, f"DISP 11,{2}\n".encode("utf-8"))
+
+            self.status_update(outstr)
+        else:
+            self.status_update("Digitizer socket connection failed.\n")
+
 
     def open_file_dialog(self) -> None:
         # options = QFileDialog.Option.DontUseNativeDialog
@@ -167,7 +247,9 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
                 self.flash_timer.start(100)
                 resp = f"{l}: Laser not initialized.\n"
             finally:
-                self.status_update(resp)
+                if type(resp) != bytes:
+                    self.status_update(resp)
+                return resp
 
         return wrapper
 
@@ -192,16 +274,20 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
                 self.lasers[laser]["PORT"] = port
                 self.lasers[laser]["MAC"] = mac
 
-    def enable_laser(self) -> None:
+
+    def enable(self) -> None:
         l = self.get_laser_name(self.sender())  # noqa: E741
+        self.loop.run_until_complete(self.enable_laser(l))
+
+    async def enable_laser(self, l) -> None:
         if l.startswith("v"):
-            self.loop.run_until_complete(self.send_receive_laser(l, "$FIRE\n" if self.sender().text() == "Fire" else "$STANDBY\n"))
+            await self.send_receive_laser(l, "$FIRE\n" if self.sender().text() == "Fire" else "$STANDBY\n")
 
         elif l.startswith("c"):
                 data = bytearray([0x7F, 5, 0x21, self.sender().text() == "Fire", 0, 0, 0])  # Test data
-                outstr = self.loop.run_until_complete(self.send_receive_laser(
+                outstr = await self.send_receive_laser(
                     l, data
-                ))
+                )
                 if outstr is not None: # only do this if serialException is not raised
                     en = int(hex_sequence(outstr).split(" ")[3])
                     resp = f"{l}: {'Enabled' if en else 'Disabled'}.\n"
@@ -212,20 +298,24 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
             self.status_update(resp)
 
 
-    def initialize(self) -> None:
+    def initialize_handler(self, *args, **kwargs) -> None:
+        self.loop.run_until_complete(self.initialize(*args, **kwargs))
+
+
+    async def initialize(self, *args, **kwargs) -> None:
         l = self.get_laser_name(self.sender())  # noqa: E741
         if l.startswith("v"):
             if self.sender().isChecked():
-                self.loop.run_until_complete(self.init_laser(l))
-                self.loop.run_until_complete(self.set_power_laser(l))
-                self.set_trigger_laser(l)
+                await self.init_laser(l)
+                await self.set_power_laser(l)
+                await self.set_trigger_laser(l)
             else:
-                self.loop.run_until_complete(self.send_receive_laser(l, "$STOP\n"))
+                await self.send_receive_laser(l, "$STOP\n")
         elif l.startswith("c"):
             if self.sender().isChecked():
-                self.loop.run_until_complete(self.init_laser(l))
-                self.loop.run_until_complete(self.set_power_laser(l))
-                self.set_trigger_laser(l)
+                await self.init_laser(l)
+                await self.set_power_laser(l)
+                await self.set_trigger_laser(l)
             else:
                 try:
                     self.lasers[l]["serial"].close()
@@ -234,18 +324,22 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
                     pass
 
 
-    @not_initialized_handler # in case maxcurr is not defined
-    def set_power_laser(self, l=None) -> None:
+    def set_power(self, l=None) -> None:
         if l is None:
             l = self.get_laser_name(self.sender())  # noqa: E741
+        self.loop.run_until_complete(self.set_power_laser(l))
+
+
+    @not_initialized_handler # in case maxcurr is not defined
+    async def set_power_laser(self, l=None) -> None:
         if l.startswith("v"):
-            self.loop.run_until_complete(self.send_receive_laser(
+            return await self.send_receive_laser(
                 l,
                 f"$DCURR {
                     MINCURR
                     + (self.lasers[l]["maxcurr"] - MINCURR) / 100 * self.ui.__dict__[l + "_power"].value()
                 }\n",
-            ))
+            )
         elif l.startswith("c"):
             gears = np.array([5, 10, 20, 30, 50, 60, 80, 100])
             setting = self.ui.__dict__[l + "_power"].value()
@@ -258,15 +352,24 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
             # outstr = self.loop.run_until_complete(send_receive_cni(
             #     self.lasers[l]["serial"], data
             # ))
-            outstr = self.loop.run_until_complete(self.send_receive_laser(
+            outstr = await self.send_receive_laser(
                 l, data
-            ))
+            )
             if outstr is not None: # only do this if serialException is not raised
                 gear = int(hex_sequence(outstr).split(" ")[3])
                 resp = f"{l}: Power set to {gears[gear]}%.\n"
+            
+            return resp
 
-    def set_trigger_laser(self, *args, **kwargs) -> None:
+
+    def set_trigger(self, *args, **kwargs) -> None:
         l = self.get_laser_name(self.sender())  # noqa: E741
+        self.loop.run_until_complete(self.set_trigger_laser(l))
+        
+
+    async def set_trigger_laser(self, l=None) -> None:
+        if l is None:
+            l = self.get_laser_name(self.sender())  # noqa: E741
 
         if "_trig_" in self.sender().objectName():
             trig_button = self.sender()
@@ -302,15 +405,15 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
                 if "_trig_" in self.sender().objectName():
                     self.sender().setChecked(not self.sender().isChecked())
 
-            self.loop.run_until_complete(self.send_receive_laser(l, f"$TRIG {trig}\n")) # this will handle non-connected errors
+            await self.send_receive_laser(l, f"$TRIG {trig}\n") # this will handle non-connected errors
 
         elif l.startswith("c"):
-            trig = 0x00 if trig_button.isChecked() else 0x01
+            trig = int(not trig_button.isChecked()) # want 0x01 if unchecked, 0x00 if checked
             
             data = bytearray([0x7F, 5, 0x01, trig, 0, 0, 0]) 
-            outstr = self.loop.run_until_complete(self.send_receive_laser(
+            outstr = await self.send_receive_laser(
                 l, data
-            ))
+            )
 
             if outstr is not None: # only do this if serialException is not raised
                 other.setChecked(trig_button.isChecked())
@@ -328,8 +431,6 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
 
         for button in [trig_button, other]:
             button.setText("Internal" if button.isChecked() else "External")
-
-
 
 
     def set_timings(self, *args, **kwargs) -> None:
@@ -456,10 +557,13 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
             # want the timing input to be disabled if it is fixed by internal triggering
             # signalling is blocked to not double-trigger
             timing_input.blockSignals(True)
+
             self.lasers[laser]["qsdelay"] = 179 if laser.startswith("v") else 244 # us, hard coded 179 for viron, 244 for cni
                 
-
-            timing_input.setEnabled(self.lasers[laser]["trig"][ind] == "E")
+            if bool(ind): # only change QS enabled/disabled
+                timing_input.setEnabled(self.lasers[laser]["trig"][ind] == "E")
+            else:
+                timing_input.setEnabled(False)
 
             if self.lasers[laser]["trig"] == "EE":
                 if timing_input.objectName().endswith("qs"):
@@ -470,12 +574,10 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
 
             timing_input.blockSignals(False)
 
-        return f"Timing values set to FL={timing_inputs[0].value()}ns and QS={timing_inputs[1].value()}ns\n"
+        self.status_update(f"{laser}: Timing values set to FL={timing_inputs[0].value()}ns and QS={timing_inputs[1].value()}ns.\n")
 
-    def send_timing(self) -> None:
-        pass
 
-    @not_initialized_handler
+    # @not_initialized_handler
     async def init_laser(self, laser: str) -> None:
         status_text = ""
         try:
@@ -512,9 +614,10 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
                 if not "serial" in self.lasers[laser]:
                     self.lasers[laser]["serial"] = await make_connection(self.ui.__dict__[laser + "_com"].currentText())
                     if self.lasers[laser]["serial"].is_open:
-                        status_text += f"{laser}: Initialized.\n"
-                        data = bytearray([0x5D, 0x11, 0x01])  # Test data
+                        data = bytearray([0x5D, 0x01, 0x01])  # Test data
                         outstr = await send_receive_cni(self.lasers[laser]["serial"], data)
+                        if "DPS" in repr(outstr): # check if communicating correctly
+                            self.status_update(f"{laser}: Initialized.\n")
 
         except (AttributeError, serial.SerialException): # no writer/reader
             self.sender().setText("Initialize")
@@ -523,15 +626,17 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
             raise KeyError # raise error to trigger decorator handling
         finally:
             return status_text
+            # return status_text
 
     @not_initialized_handler
-    async def send_receive_laser(self, laser: str, command: str | bytearray) -> str:
+    async def send_receive_laser(self, laser: str, command: str | bytearray) -> str | bytes:
         if laser.startswith("v"):
             resp = await send_receive(self.lasers[laser]["reader"], self.lasers[laser]["writer"], command)
             return f"{laser}: {resp}\n"
         elif laser.startswith("c"):
             resp = await send_receive_cni(self.lasers[laser]["serial"], command)
-            return repr(resp)
+            return resp
+            # return f"{laser}: {repr(resp)}\n"
             # raise Exception("Telnet send-receive is sent to {laser}, which has a serial-based communication protocol.")
         
     def toggle_button_color(self) -> None:
@@ -556,11 +661,19 @@ class LaserGUI(QMainWindow, Ui_MainWindow):
         self.status_bar.setText(self.status_text)
         self.scroll_to_top()
 
-    def close_serial(self):
+    def close_connections(self):
+        self.loop.run_until_complete(self.close_connections_devices())
+
+    async def close_connections_devices(self):
         for laser in self.lasers:
             if "serial" in self.lasers[laser]:
                 if self.lasers[laser]["serial"].is_open:
                     self.lasers[laser]["serial"].close()
+            elif "writer" in self.lasers[laser]:
+                self.lasers[laser].close()
+                await self.lasers[laser].wait_closed()
+        if hasattr(self, "sock"):
+            DG645.close(self.sock)
 
 
 def main() -> None:
