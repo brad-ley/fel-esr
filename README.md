@@ -7,7 +7,7 @@ asyncio.set_event_loop(self.loop)
 
 code block. The `async` functions then run in that threaded loop.
 
-The software will initialize communication with the laser, allow a user to set triggering mode, laser power, and begin firing. It will also send the timings to a connected PulseBlaster pulse generator that drives the external triggers and sets the pulse timings.
+The software will initialize communication with the laser, allow a user to set triggering mode, laser power, and begin firing. It will also send the timings to a connected DG645 that drives the external triggers and sets the pulse timings.
 
 The GUI was built with `pyqt6-tools designer`, which is for making GUI front ends. Use it to modify the laser_timing.ui file and then
 
